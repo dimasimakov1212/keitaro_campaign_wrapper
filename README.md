@@ -23,3 +23,27 @@ source venv/bin/activate  # Для Windows: venv\Scripts\activate
 ```bash
 pip install -r backend/requirements.txt
 ```
+
+Запустите сборку контейнеров:
+
+```bash
+docker compose up --build
+```
+
+Запустите сборку контейнеров:
+
+```bash
+docker compose up --build
+```
+
+Проверка работоспособности приложения. Перейдите во вкладку:
+
+```bash
+http://localhost:8000/api/health
+```
+
+Пример вывода:
+
+```bash
+{"status":"ok"}
+```
