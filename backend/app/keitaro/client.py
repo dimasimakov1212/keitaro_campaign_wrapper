@@ -51,37 +51,34 @@ class KeitaroClient:
                 logger.error(f"Unexpected Error: {e}")
                 raise
 
-    # --- Методы для справочников ---
+    # --- Справочники ---
     async def get_domains(self):
         return await self._request("GET", "domains")
 
     async def get_groups(self):
         return await self._request("GET", "groups")
 
-    async def get_sources(self):
-        return await self._request("GET", "sources")
+    async def create_group(self, group_data: dict):
+        return await self._request("POST", "groups", json=group_data)
 
-    # --- Методы для создания кампании ---
+    async def get_traffic_sources(self):
+        return await self._request("GET", "traffic_sources")
+
+    async def get_offers(self):
+        return await self._request("GET", "offers")
+
+    # --- Кампании и потоки ---
     async def create_campaign(self, campaign_data: dict):
         return await self._request("POST", "campaigns", json=campaign_data)
 
     async def create_stream(self, stream_data: dict):
         return await self._request("POST", "streams", json=stream_data)
-
-    # --- Методы для редактора ---
-    async def get_offers(self):
-        return await self._request("GET", "offers")
-
-    async def get_campaign(self, campaign_id: int):
-        return await self._request("GET", f"campaigns/{campaign_id}")
-
-    async def get_streams(self, campaign_id: int):
+        
+    async def get_campaign_streams(self, campaign_id: int):
         return await self._request("GET", "streams", params={"campaign_id": campaign_id})
-
+        
     async def update_stream(self, stream_id: int, stream_data: dict):
         return await self._request("PUT", f"streams/{stream_id}", json=stream_data)
 
-    async def delete_stream(self, stream_id: int):
-        return await self._request("DELETE", f"streams/{stream_id}")
 
 keitaro_client = KeitaroClient()
