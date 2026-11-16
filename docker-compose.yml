@@ -25,6 +25,7 @@ services:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-keitaro_db}
       KEITARO_API_URL: ${KEITARO_API_URL}
       KEITARO_API_KEY: ${KEITARO_API_KEY}
+      SURNAME: ${SURNAME}
     depends_on:
       db:
         condition: service_healthy

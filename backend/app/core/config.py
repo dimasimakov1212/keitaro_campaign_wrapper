@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     KEITARO_API_URL: str
     KEITARO_API_KEY: str
+    SURNAME: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
