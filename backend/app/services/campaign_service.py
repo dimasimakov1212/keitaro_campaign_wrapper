@@ -46,7 +46,7 @@ class CampaignService:
                 "traffic_source_id": source_id,
                 "state": "active"
             }
-            
+
             campaign_response = await keitaro_client.create_campaign(campaign_payload)
             campaign_id = campaign_response.get("id")
             
@@ -89,5 +89,25 @@ class CampaignService:
         except Exception as e:
             # Ловим любые другие ошибки и оборачиваем в 500
             raise HTTPException(status_code=500, detail=f"Ошибка бизнес-логики при создании кампании: {str(e)}")
+
+    async def get_user_campaigns(self, surname: str) -> list[dict]:
+        """
+        Получить список кампаний пользователя (отфильтрованных по префиксу).
+        Возвращает только id и name для списка на фронтенде.
+        """
+        try:
+            all_campaigns = await keitaro_client.get_campaigns()
+            prefix = f"test_{surname.lower()}_"
+            
+            # Фильтруем кампании по префиксу и облегчаем данные
+            user_campaigns = [
+                {"id": c["id"], "name": c["name"]}
+                for c in all_campaigns
+                if c.get("name", "").lower().startswith(prefix)
+            ]
+            
+            return user_campaigns
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Ошибка получения списка кампаний: {str(e)}")
 
 campaign_service = CampaignService()
