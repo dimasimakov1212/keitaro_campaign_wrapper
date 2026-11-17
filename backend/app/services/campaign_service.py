@@ -41,6 +41,7 @@ class CampaignService:
             # 4. Создание кампании
             campaign_payload = {
                 "name": name,
+                "alias": name,
                 "domain_id": domain_id,
                 "group_id": group_id,
                 "traffic_source_id": source_id,
@@ -57,18 +58,40 @@ class CampaignService:
             stream1_payload = {
                 "campaign_id": campaign_id,
                 "name": f"Geo {geo_code.upper()} -> Google",
-                "filters": [{"type": "geo", "value": geo_code.upper()}],
-                "action": {"type": "redirect", "url": "https://google.com"}
+                "type": "regular",
+                "schema": "redirect",
+                "action_type": "http",
+                "action_payload": "https://google.com",
+                "collect_clicks": True,
+                "filters": [
+                    {
+                        "name": "country",
+                        "mode": "accept",
+                        "payload": [geo_code.upper()]
+                    }
+                ]
             }
+
             await keitaro_client.create_stream(stream1_payload)
 
             # 6. Создание Потока 2: Все остальные -> Оффер
             stream2_payload = {
                 "campaign_id": campaign_id,
-                "name": "Default -> Offer",
-                "filters": [], 
-                "action": {"type": "offer", "offer_id": offer_id}
+                "name": "Offers",
+                "type": "regular",
+                "schema": "landings",       # <-- Keitaro использует схему 'landings' для ротации офферов
+                "action_type": "http",
+                "action_payload": "",
+                "collect_clicks": True,
+                "offers": [
+                    {
+                        "offer_id": offer_id,
+                        "share": 100,
+                        "state": "active"
+                    }
+                ]
             }
+
             await keitaro_client.create_stream(stream2_payload)
 
             return {
