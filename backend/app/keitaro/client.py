@@ -87,7 +87,7 @@ class KeitaroClient:
         
     async def get_campaign_streams(self, campaign_id: int):
         """Получить потоки кампании"""
-        return await self._request("GET", "streams", params={"campaign_id": campaign_id})
+        return await self._request("GET", f"campaigns/{campaign_id}/streams")
         
     async def update_stream(self, stream_id: int, stream_data: dict):
         """Изменить поток"""
