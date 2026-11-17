@@ -45,3 +45,15 @@ async def get_offers():
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ошибка получения офферов: {str(e)}")
+
+
+@router.get("/campaigns/{campaign_id}/streams")
+async def get_campaign_streams(campaign_id: int):
+    """
+    Получить список всех потоков конкретной кампании.
+    """
+    try:
+        streams = await campaign_service.get_campaign_streams_enriched(campaign_id)
+        return {"streams": streams}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ошибка получения потоков: {str(e)}")
