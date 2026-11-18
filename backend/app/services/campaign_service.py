@@ -133,4 +133,33 @@ class CampaignService:
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Ошибка получения списка кампаний: {str(e)}")
 
+    async def get_campaign_streams_enriched(self, campaign_id: int) -> list[dict]:
+        """
+        Получает потоки кампании и обогащает их названиями офферов,
+        предварительно обрезая слишком длинные имена для удобства отображения.
+        """
+        try:
+            # 1. Получаем потоки
+            streams = await keitaro_client.get_campaign_streams(campaign_id)
+            
+            # 2. Получаем все офферы один раз для быстрого поиска (избегаем N+1 запросов)
+            raw_offers = await keitaro_client.get_offers()
+            offers_map = {offer["id"]: offer["name"] for offer in raw_offers}
+            
+            # 3. Обогащаем и обрезаем данные
+            MAX_NAME_LENGTH = 70 # Оптимальная длина для отображения в таблице
+            
+            for stream in streams:
+                if "offers" in stream and isinstance(stream["offers"], list):
+                    for offer_item in stream["offers"]:
+                        offer_id = offer_item.get("offer_id")
+                        # Сохраняем полное название без обрезки
+                        offer_item["offer_name"] = offers_map.get(offer_id, f"Неизвестный оффер (ID: {offer_id})")
+            
+            return streams
+            
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Ошибка получения потоков: {str(e)}")
+        
+
 campaign_service = CampaignService()

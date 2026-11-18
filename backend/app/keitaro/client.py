@@ -87,11 +87,19 @@ class KeitaroClient:
         
     async def get_campaign_streams(self, campaign_id: int):
         """Получить потоки кампании"""
-        return await self._request("GET", "streams", params={"campaign_id": campaign_id})
+        return await self._request("GET", f"campaigns/{campaign_id}/streams")
         
     async def update_stream(self, stream_id: int, stream_data: dict):
-        """Изменить поток"""
-        return await self._request("PUT", f"streams/{stream_id}", json=stream_data)
+        """Обновляет поток"""
+        # 1. Получаем текущий поток
+        current_stream = await self._request("GET", f"streams/{stream_id}")
+        
+        # 2. Объединяем: берём все поля из текущего потока,
+        #    но перезаписываем те, что пришли в stream_data
+        updated_data = {**current_stream, **stream_data}
+        
+        # 3. Отправляем полный объект
+        return await self._request("PUT", f"streams/{stream_id}", json=updated_data)
 
 
 keitaro_client = KeitaroClient()
