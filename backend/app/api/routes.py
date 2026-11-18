@@ -57,3 +57,15 @@ async def get_campaign_streams(campaign_id: int):
         return {"streams": streams}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ошибка получения потоков: {str(e)}")
+
+
+@router.put("/streams/{stream_id}")
+async def update_stream(stream_id: int, stream_data: dict):
+    """
+    Обновить поток (например, добавить/удалить офферы или изменить share).
+    """
+    try:
+        updated_stream = await keitaro_client.update_stream(stream_id, stream_data)
+        return {"success": True, "stream": updated_stream}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ошибка обновления потока: {str(e)}")
